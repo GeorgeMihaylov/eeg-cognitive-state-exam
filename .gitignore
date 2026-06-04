@@ -1,11 +1,18 @@
-# Python
-__pycache__/
-*.py[cod]
-.ipynb_checkpoints/
+# Python environments
 .venv/
 venv/
 env/
-*.egg-info/
+ENV/
+Lib/
+Scripts/
+Include/
+pyvenv.cfg
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+.ipynb_checkpoints/
 
 # IDE
 .idea/
@@ -18,6 +25,7 @@ data/processed/*.parquet
 data/processed/*.csv
 data/processed/*.npy
 data/processed/*.npz
+data/synthetic/*.npy
 *.edf
 *.mat
 
@@ -28,9 +36,10 @@ models/*.pkl
 models/*.joblib
 models/*.onnx
 
-# Results that can be regenerated
-results/*.pkl
-results/*.joblib
+# Temporary outputs
+*.log
+tmp/
+temp/
 
 # OS
 .DS_Store

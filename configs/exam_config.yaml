@@ -1,0 +1,57 @@
+project:
+  name: eeg-cognitive-state-exam
+  random_state: 42
+
+paths:
+  processed_dataset: data/processed/windowed_eeg_pm_dataset_w10.parquet
+
+  results_dir: results
+  reports_dir: reports
+  figures_dir: reports/figures
+  tables_dir: reports/tables
+  models_dir: models
+  synthetic_dir: data/synthetic
+
+data:
+  group_column: subject_id
+  record_column: record_id
+
+features:
+  default_feature_set: pow_plus_eeg
+  feature_sets:
+    - pow
+    - eeg
+    - pow_plus_eeg
+
+targets:
+  - Attention
+  - Engagement
+  - Excitement
+  - Stress
+  - Relaxation
+  - Interest
+  - Focus
+
+validation:
+  strategy: group_kfold
+  n_splits: 5
+  test_size: 0.2
+
+temporal_context:
+  sequence_lengths:
+    - 3
+    - 5
+
+generation:
+  target_feature_set: eeg
+  latent_dim: 32
+  hidden_dims:
+    - 256
+    - 64
+  batch_size: 256
+  epochs: 50
+  learning_rate: 0.001
+
+augmentation:
+  target: Focus
+  synthetic_ratio: 1.0
