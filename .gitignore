@@ -44,3 +44,6 @@ temp/
 # OS
 .DS_Store
 Thumbs.db
+
+# Generated intermediate outputs inside processed data
+data/processed/results/
