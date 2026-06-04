@@ -1,0 +1,18 @@
+metric,value,comment
+best_baseline_model,logistic_robust,Best default-threshold model in WESAD stress baseline.
+best_baseline_balanced_accuracy,0.802947,
+best_baseline_macro_f1,0.793048,
+best_baseline_roc_auc,0.87844,
+best_baseline_average_precision,0.804481,
+best_threshold_optimized_model,rf_clf,Best OOF threshold-optimized model from stress baseline analysis.
+best_threshold_optimized_threshold,0.25,
+best_threshold_optimized_balanced_accuracy,0.809151,
+best_feature_group_default,bvp_only / logistic_robust,Best default-threshold feature group ablation result.
+best_feature_group_default_balanced_accuracy,0.83491,
+best_protocol_default,bvp_temp / logistic_robust,Best default-threshold protocol-control result.
+best_protocol_default_balanced_accuracy,0.842779,
+delta_all_minus_no_acc_balanced_accuracy,-0.010112,Protocol-control delta for model=logistic_robust.
+delta_no_acc_minus_acc_only_balanced_accuracy,-0.017269,Protocol-control delta for model=logistic_robust.
+delta_bvp_only_minus_acc_only_balanced_accuracy,0.004581,Protocol-control delta for model=logistic_robust.
+delta_all_minus_no_acc_best_balanced_accuracy,-0.011003,Protocol-control delta for model=logistic_robust.
+delta_no_acc_minus_acc_only_best_balanced_accuracy,-0.030412,Protocol-control delta for model=logistic_robust.

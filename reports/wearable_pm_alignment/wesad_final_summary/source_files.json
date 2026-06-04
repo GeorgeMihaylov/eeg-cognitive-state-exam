@@ -1,0 +1,15 @@
+{
+  "dataset_report": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\wesad_windowed_stress_dataset_report.md",
+  "baseline_run": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_142937_wesad_stress_full",
+  "baseline_summary": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_142937_wesad_stress_full\\metrics_summary.csv",
+  "threshold_summary": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_142937_wesad_stress_full\\analysis\\best_thresholds.csv",
+  "baseline_per_subject_summary": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_142937_wesad_stress_full\\analysis\\per_subject_metrics_summary.csv",
+  "ablation_run": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_144608_wesad_feature_group_ablation",
+  "ablation_summary": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_144608_wesad_feature_group_ablation\\ablation_summary.csv",
+  "ablation_best_by_group": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_144608_wesad_feature_group_ablation\\best_by_feature_group.csv",
+  "protocol_run": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_160829_wesad_protocol_control",
+  "protocol_summary": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_160829_wesad_protocol_control\\protocol_control_summary.csv",
+  "protocol_threshold": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_160829_wesad_protocol_control\\best_thresholds.csv",
+  "protocol_comparison": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\runs\\20260514_160829_wesad_protocol_control\\protocol_control_comparison.csv",
+  "output_dir": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\wearable_pm_alignment\\wesad_final_summary"
+}

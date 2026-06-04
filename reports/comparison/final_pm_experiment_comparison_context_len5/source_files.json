@@ -1,0 +1,6 @@
+{
+  "tabular": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\data\\processed\\baseline_pow_plus_eeg_w10_log_regression_metrics_agg.csv",
+  "context": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\runs\\20260512_152527_context_tabular_len5_fast_all_pow_plus_eeg_len5\\all_targets_summary.csv",
+  "mha_len3": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\runs\\20260508_172632_mha_all_pm_short_len3_control_all_pow_plus_eeg_len3\\all_targets_summary.csv",
+  "mha_len5": "D:\\PycharmProjects\\eeg-cognitive-state-nir\\reports\\runs\\20260508_171708_mha_all_pm_short_len5_all_pow_plus_eeg_len5\\all_targets_summary.csv"
+}
