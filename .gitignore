@@ -47,3 +47,6 @@ Thumbs.db
 
 # Generated intermediate outputs inside processed data
 data/processed/results/
+
+# Experiment runs
+reports/runs/*smoke*/
