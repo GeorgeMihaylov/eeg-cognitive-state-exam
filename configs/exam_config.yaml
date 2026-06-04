@@ -24,13 +24,13 @@ features:
     - pow_plus_eeg
 
 targets:
-  - Attention
-  - Engagement
-  - Excitement
-  - Stress
-  - Relaxation
-  - Interest
-  - Focus
+  - target_attention
+  - target_engagement
+  - target_excitement
+  - target_stress
+  - target_relaxation
+  - target_interest
+  - target_focus
 
 validation:
   strategy: group_kfold
@@ -53,5 +53,5 @@ generation:
   learning_rate: 0.001
 
 augmentation:
-  target: Focus
+  target: target_focus
   synthetic_ratio: 1.0
