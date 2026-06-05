@@ -1,12 +1,45 @@
 # EEG Cognitive State Exam Project
 
-Exam project on EEG-based cognitive state prediction using EEG/POW window features and local temporal context.
+Экзаменационный проект по глубокому обучению для анализа ЭЭГ-данных, предсказания когнитивно-аффективных состояний и генерации синтетических EEG/POW-представлений.
 
-## 1. Project idea
+## 1. Идея проекта
 
-The project studies whether EEG-derived features can be used to predict cognitive and affective Performance Metrics.
+Цель проекта — проверить, можно ли по оконным EEG/POW-признакам предсказывать когнитивно-аффективные Performance Metrics, а также оценить, помогает ли локальный временной контекст улучшить качество предсказания.
 
-The main targets are:
+Основная гипотеза:
+
+> Когнитивно-аффективные состояния человека обладают локальной временной инерцией, поэтому модели, использующие последовательность соседних EEG/POW-окон, должны работать лучше, чем модели, использующие только одно окно.
+
+Проект адаптирован под экзамен по глубокому обучению. В нём реализованы не только классические ML baseline-модели, но и несколько deep learning подходов:
+
+```text
+MLP
+LSTM
+TransformerEncoder
+Autoencoder
+```
+
+---
+
+## 2. Используемые данные
+
+Основной обработанный датасет:
+
+```text
+data/processed/windowed_eeg_pm_dataset_w10.parquet
+```
+
+Характеристики датасета:
+
+```text
+Rows: 51 308
+Columns: 508
+POW features: 280
+EEG features: 168
+Total pow_plus_eeg features: 448
+```
+
+Основные target-переменные:
 
 ```text
 target_attention
@@ -18,49 +51,18 @@ target_interest
 target_focus
 ```
 
-The main research hypothesis:
+Входные признаки:
 
-> Local temporal context improves the prediction of cognitive state metrics compared with a single-window tabular baseline.
+```text
+POW.* features
+EEG.* features
+```
 
-In addition to the main EEG/PM pipeline, the project includes an optional WESAD wearable physiology block for external stress-related validation.
+Performance Metrics используются как целевые переменные, а не как входные признаки.
 
 ---
 
-## 2. Current project status
-
-Current version includes:
-
-```text
-- processed EEG/PM dataset
-- baseline ML models for one target
-- multi-PM baseline pipeline
-- temporal context tabular baseline scripts
-- Multi-Head Attention / TransformerEncoder script
-- experiment comparison script
-- optional WESAD block
-```
-
-Already tested:
-
-```text
-- data/processed/windowed_eeg_pm_dataset_w10.parquet is readable
-- src/07_train_baselines.py successfully runs on target_focus
-- src/09_train_multi_pm_baselines.py successfully runs in smoke-test mode
-```
-
-Current processed dataset:
-
-```text
-Rows: 51 308
-Columns: 508
-POW features: 280
-EEG features: 168
-Total pow_plus_eeg features: 448
-```
-
----
-
-## 3. Repository structure
+## 3. Основная структура проекта
 
 ```text
 eeg-cognitive-state-exam/
@@ -79,6 +81,7 @@ eeg-cognitive-state-exam/
 ├── reports/
 │   ├── comparison/
 │   ├── figures/
+│   ├── final_summary/
 │   ├── results/
 │   ├── runs/
 │   ├── tables/
@@ -97,6 +100,11 @@ eeg-cognitive-state-exam/
 │   ├── 12_visualize_mha_all_pm_run.py
 │   ├── 13_train_context_tabular_baselines.py
 │   ├── 14_compare_experiments.py
+│   ├── 15_train_mlp_pm_regressor.py
+│   ├── 16_train_lstm_pm_dynamics.py
+│   ├── 17_train_transformer_pm_dynamics.py
+│   ├── 22_train_eeg_autoencoder.py
+│   ├── 23_summarize_dl_experiments.py
 │   └── wesad/
 │
 ├── README.md
@@ -106,15 +114,15 @@ eeg-cognitive-state-exam/
 
 ---
 
-## 4. Environment setup
+## 4. Настройка окружения
 
-The project was tested with a Conda environment:
+Проект тестировался в Conda-окружении:
 
 ```text
 D:\miniconda3\envs\eeg_nir\python.exe
 ```
 
-Recommended setup:
+Создание окружения:
 
 ```powershell
 conda create -n eeg_nir python=3.11 -y
@@ -122,13 +130,13 @@ conda activate eeg_nir
 pip install -r requirements.txt
 ```
 
-If `python` is not available directly from PowerShell, use the full interpreter path:
+Если команда `python` из PowerShell не работает, используйте полный путь к интерпретатору:
 
 ```powershell
 D:\miniconda3\envs\eeg_nir\python.exe
 ```
 
-Example:
+Проверка:
 
 ```powershell
 D:\miniconda3\envs\eeg_nir\python.exe --version
@@ -136,47 +144,39 @@ D:\miniconda3\envs\eeg_nir\python.exe --version
 
 ---
 
-## 5. Data
+## 5. Проверка данных
 
-The main processed dataset must be located here:
-
-```text
-data/processed/windowed_eeg_pm_dataset_w10.parquet
-```
-
-This file is not intended to be committed to GitHub if it is large.
-
-Check that the dataset exists:
+Проверить наличие датасета:
 
 ```powershell
 Test-Path data\processed\windowed_eeg_pm_dataset_w10.parquet
 ```
 
-Expected result:
+Ожидаемый результат:
 
 ```text
 True
 ```
 
-Check that the dataset is readable:
+Проверить чтение parquet-файла:
 
 ```powershell
 D:\miniconda3\envs\eeg_nir\python.exe -c "import pandas as pd; df=pd.read_parquet('data/processed/windowed_eeg_pm_dataset_w10.parquet'); print(df.shape); print(df.columns[:30].tolist())"
 ```
 
-Expected shape:
+Ожидаемый размер:
 
 ```text
 (51308, 508)
 ```
 
-Check available target columns:
+Проверить target-колонки:
 
 ```powershell
 D:\miniconda3\envs\eeg_nir\python.exe -c "import pandas as pd; df=pd.read_parquet('data/processed/windowed_eeg_pm_dataset_w10.parquet'); print([c for c in df.columns if c.startswith('target_')])"
 ```
 
-Expected target columns:
+Ожидаемые target-переменные:
 
 ```text
 target_attention
@@ -190,276 +190,85 @@ target_focus
 
 ---
 
-## 6. Configuration
+## 6. Описание скриптов
 
-Main config file:
-
-```text
-configs/exam_config.yaml
-```
-
-Current target configuration:
-
-```yaml
-targets:
-  - target_attention
-  - target_engagement
-  - target_excitement
-  - target_stress
-  - target_relaxation
-  - target_interest
-  - target_focus
-```
-
-Main feature set:
-
-```yaml
-features:
-  default_feature_set: pow_plus_eeg
-```
-
-Main validation strategy:
-
-```yaml
-validation:
-  strategy: group_kfold
-  n_splits: 5
-```
-
-The main evaluation scheme is:
-
-```text
-GroupKFold by subject_id
-```
-
-This is used as the primary validation scheme because it estimates transfer to unseen users more honestly than a random split.
-
----
-
-## 7. Scripts
-
-## 7.1. Dataset preparation
+## 6.1. Подготовка данных
 
 ### `src/04_build_windowed_pm_dataset.py`
 
-Builds the windowed EEG/PM dataset.
+Строит оконный EEG/PM-датасет.
 
-Main role:
+Назначение:
 
 ```text
-Creates window-level EEG/PM observations.
+- синхронизация EEG и Performance Metrics;
+- формирование окон;
+- агрегация PM-метрик;
+- сохранение итогового parquet-датасета.
 ```
 
 ---
 
 ### `src/05_analyze_pm_sampling.py`
 
-Analyzes the sampling frequency of Performance Metrics.
+Анализирует частоту обновления Performance Metrics.
 
-Main role:
+Назначение:
 
 ```text
-Supports the choice of the 10-second window size.
+- анализ временных интервалов между PM-измерениями;
+- обоснование длины окна;
+- подготовка статистики для отчёта.
 ```
 
 ---
 
 ### `src/06_eda_windowed_dataset.py`
 
-Runs exploratory analysis of the processed windowed dataset.
+Проводит EDA итогового оконного датасета.
 
-Main role:
+Назначение:
 
 ```text
-Checks dataset size, missing values, target distributions and basic statistics.
+- анализ размера датасета;
+- проверка пропусков;
+- анализ распределения target-переменных;
+- подготовка EDA-графиков.
 ```
 
 ---
 
 ### `src/08_build_windowed_eeg_features.py`
 
-Builds EEG-derived features and combines them with POW features.
+Формирует EEG-derived признаки и объединяет их с POW-признаками.
 
-Main role:
+Назначение:
 
 ```text
-Creates the main feature space used by baseline and temporal models.
+- построение EEG-признаков;
+- объединение EEG и POW feature sets;
+- подготовка признакового пространства для моделей.
 ```
 
 ---
 
-## 7.2. Baseline models
+## 6.2. Классические baseline-модели
 
 ### `src/07_train_baselines.py`
 
-Trains baseline models for one selected target.
+Обучает baseline-модели для одного выбранного target.
 
-Supports:
-
-```text
-- classification
-- regression
-- random split
-- GroupKFold by subject_id
-- cross-source validation
-```
-
-Supported feature sets:
+Поддерживает:
 
 ```text
-pow
-eeg
-pow_plus_eeg
+- classification;
+- regression;
+- random split;
+- GroupKFold by subject_id;
+- cross-source validation.
 ```
 
-Check arguments:
-
-```powershell
-D:\miniconda3\envs\eeg_nir\python.exe src\07_train_baselines.py --help
-```
-
----
-
-### `src/09_train_multi_pm_baselines.py`
-
-Trains regression baselines for all PM targets.
-
-Supported models:
-
-```text
-ridge
-hgb
-lgbm
-rf
-```
-
-Check arguments:
-
-```powershell
-D:\miniconda3\envs\eeg_nir\python.exe src\09_train_multi_pm_baselines.py --help
-```
-
----
-
-### `src/10_describe_multi_pm_baseline.py`
-
-Summarizes multi-PM baseline results.
-
-Main role:
-
-```text
-Aggregates model metrics and prepares report-friendly summaries.
-```
-
----
-
-## 7.3. Temporal context and attention models
-
-### `src/11_train_multihead_attention_short.py`
-
-Trains a Multi-Head Attention / TransformerEncoder model on sequences of neighboring EEG/POW windows.
-
-Main idea:
-
-```text
-Instead of using only X_t, the model uses a local sequence:
-[X_{t-1}, X_t, X_{t+1}]
-or
-[X_{t-2}, X_{t-1}, X_t, X_{t+1}, X_{t+2}]
-```
-
----
-
-### `src/12_visualize_mha_all_pm_run.py`
-
-Builds visualizations for MHA experiments.
-
----
-
-### `src/13_train_context_tabular_baselines.py`
-
-Trains context-tabular baselines.
-
-Main idea:
-
-```text
-Concatenate neighboring windows into one tabular vector and train a classical ML model.
-```
-
-This helps test whether the improvement comes from temporal context itself or from the attention architecture.
-
----
-
-### `src/14_compare_experiments.py`
-
-Compares:
-
-```text
-- single-window tabular baseline
-- context-tabular baseline
-- Multi-Head Attention model
-```
-
-Main role:
-
-```text
-Builds the final comparison table for the exam report.
-```
-
----
-
-## 7.4. WESAD optional block
-
-The directory:
-
-```text
-src/wesad/
-```
-
-contains additional scripts for a wearable stress-related benchmark.
-
-This block is optional for the exam project and should be treated as an additional validation, not as the main research line.
-
----
-
-## 8. Commands for running experiments
-
-## 8.1. Smoke-test baseline for `target_focus`
-
-Use this command to quickly verify that the baseline pipeline works:
-
-```powershell
-D:\miniconda3\envs\eeg_nir\python.exe src\07_train_baselines.py `
-  --root . `
-  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
-  --output-prefix results/baseline_focus_smoke `
-  --reg-target target_focus `
-  --class-target label_q5 `
-  --feature-set pow_plus_eeg `
-  --feature-mode raw_pow `
-  --n-splits 3 `
-  --test-size 0.2 `
-  --max-rows 5000 `
-  --fast `
-  --skip-cross-source
-```
-
-Expected outputs:
-
-```text
-data/processed/results/baseline_focus_smoke_classification_metrics.csv
-data/processed/results/baseline_focus_smoke_regression_metrics.csv
-data/processed/results/baseline_focus_smoke_classification_metrics_agg.csv
-data/processed/results/baseline_focus_smoke_regression_metrics_agg.csv
-reports/results/baseline_focus_smoke_report.md
-reports/figures/results/baseline_focus_smoke/
-```
-
----
-
-## 8.2. Full baseline for `target_focus`
-
-Use this command for the main single-target baseline:
+Пример запуска для `target_focus`:
 
 ```powershell
 D:\miniconda3\envs\eeg_nir\python.exe src\07_train_baselines.py `
@@ -475,69 +284,22 @@ D:\miniconda3\envs\eeg_nir\python.exe src\07_train_baselines.py `
   --skip-cross-source
 ```
 
-Current full baseline result for `target_focus` using GroupKFold by subject:
-
-```text
-Best regression model: rf_reg
-
-R² mean:       0.146
-MAE mean:      0.0887
-RMSE mean:     0.1147
-Pearson mean:  0.411
-Spearman mean: 0.392
-```
-
-Random split gives much higher values:
-
-```text
-R²:       0.661
-Pearson:  0.830
-Spearman: 0.819
-```
-
-Interpretation:
-
-```text
-Random split overestimates model quality. GroupKFold by subject_id is the main validation scheme for the exam report.
-```
-
 ---
 
-## 8.3. Smoke-test multi-PM baseline
+### `src/09_train_multi_pm_baselines.py`
 
-Use this command to verify the multi-target baseline pipeline:
+Обучает классические baseline-регрессоры по всем PM-метрикам.
 
-```powershell
-D:\miniconda3\envs\eeg_nir\python.exe src\09_train_multi_pm_baselines.py `
-  --root . `
-  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
-  --run-name multi_pm_smoke `
-  --feature-set pow_plus_eeg `
-  --feature-mode raw_pow `
-  --models hgb,lgbm `
-  --validation groupkfold `
-  --n-splits 3 `
-  --max-rows 5000 `
-  --seed 42
+Поддерживаемые модели:
+
+```text
+ridge
+hgb
+lgbm
+rf
 ```
 
-Current smoke-test best results:
-
-| Target     | Best model |    R² | Spearman |
-| ---------- | ---------: | ----: | -------: |
-| excitement |    hgb_reg | 0.293 |    0.507 |
-| relaxation |   lgbm_reg | 0.226 |    0.467 |
-| engagement |    hgb_reg | 0.219 |    0.427 |
-| stress     |   lgbm_reg | 0.166 |    0.366 |
-| attention  |   lgbm_reg | 0.110 |    0.364 |
-| interest   |    hgb_reg | 0.096 |    0.338 |
-| focus      |   lgbm_reg | 0.088 |    0.317 |
-
----
-
-## 8.4. Full multi-PM baseline
-
-Use this command for the main multi-target baseline:
+Полный запуск:
 
 ```powershell
 D:\miniconda3\envs\eeg_nir\python.exe src\09_train_multi_pm_baselines.py `
@@ -552,193 +314,473 @@ D:\miniconda3\envs\eeg_nir\python.exe src\09_train_multi_pm_baselines.py `
   --seed 42
 ```
 
-After the run, find the latest output directory:
+---
 
-```powershell
-Get-ChildItem reports\runs | Sort-Object LastWriteTime -Descending | Select-Object -First 5 Name, LastWriteTime
-```
+### `src/10_describe_multi_pm_baseline.py`
 
-Print the aggregated result table:
+Формирует описание и сводку результатов multi-PM baseline.
 
-```powershell
-$run = Get-ChildItem reports\runs | Where-Object {$_.Name -like "*multi_pm_groupkfold_full*"} | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-Import-Csv "$($run.FullName)\target_metrics_agg.csv" | Sort-Object {[double]$_.r2_mean} -Descending | Format-Table target_name,model,mae_mean,rmse_mean,r2_mean,pearson_mean,spearman_mean
-```
+---
 
-Expected files:
+## 6.3. Deep Learning модели
+
+### `src/15_train_mlp_pm_regressor.py`
+
+Multi-output MLP-регрессор на PyTorch.
+
+Задача:
 
 ```text
-reports/runs/<timestamp>_multi_pm_groupkfold_full_pow_plus_eeg_raw_pow/target_fold_metrics.csv
-reports/runs/<timestamp>_multi_pm_groupkfold_full_pow_plus_eeg_raw_pow/target_metrics_agg.csv
-reports/runs/<timestamp>_multi_pm_groupkfold_full_pow_plus_eeg_raw_pow/target_summary.csv
-reports/runs/<timestamp>_multi_pm_groupkfold_full_pow_plus_eeg_raw_pow/report.md
+Вход: одно EEG/POW-окно, 448 признаков
+Выход: 7 PM target-переменных
+```
+
+Архитектура:
+
+```text
+448 → 512 → 256 → 128 → 7
+BatchNorm
+ReLU
+Dropout
+```
+
+Запуск:
+
+```powershell
+D:\miniconda3\envs\eeg_nir\python.exe src\15_train_mlp_pm_regressor.py `
+  --root . `
+  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
+  --run-name mlp_pm_groupkfold_full `
+  --feature-set pow_plus_eeg `
+  --n-splits 5 `
+  --epochs 80 `
+  --batch-size 1024 `
+  --hidden-dims 512 256 128 `
+  --dropout 0.25 `
+  --lr 1e-3 `
+  --weight-decay 1e-4 `
+  --patience 12 `
+  --amp
+```
+
+Назначение:
+
+```text
+MLP используется как нейросетевой baseline без временного контекста.
+```
+
+Основной вывод:
+
+```text
+MLP показывает положительные корреляции, но в целом уступает классическим tree-based baseline-моделям и sequence DL-моделям.
 ```
 
 ---
 
-## 8.5. Context-tabular baseline
+### `src/16_train_lstm_pm_dynamics.py`
 
-Check available arguments:
+LSTM-модель для анализа локальной временной динамики EEG/POW-окон.
 
-```powershell
-D:\miniconda3\envs\eeg_nir\python.exe src\13_train_context_tabular_baselines.py --help
-```
-
-The expected experiment should compare:
+Задача:
 
 ```text
-seq_len = 3
-seq_len = 5
-feature_set = pow_plus_eeg
-validation = GroupKFold by subject_id
-targets = all PM targets
+Вход: последовательность из 5 соседних EEG/POW-окон
+Форма входа: [batch, seq_len, features]
+Выход: 7 PM target-переменных
 ```
 
-The purpose is to test whether local temporal context improves prediction quality.
-
----
-
-## 8.6. Multi-Head Attention model
-
-Check available arguments:
+Полный запуск:
 
 ```powershell
-D:\miniconda3\envs\eeg_nir\python.exe src\11_train_multihead_attention_short.py --help
+D:\miniconda3\envs\eeg_nir\python.exe src\16_train_lstm_pm_dynamics.py `
+  --root . `
+  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
+  --run-name lstm_pm_groupkfold_full `
+  --feature-set pow_plus_eeg `
+  --seq-len 5 `
+  --target-position center `
+  --n-splits 5 `
+  --epochs 60 `
+  --batch-size 512 `
+  --hidden-dim 128 `
+  --num-layers 1 `
+  --head-hidden-dim 128 `
+  --dropout 0.2 `
+  --lr 1e-3 `
+  --weight-decay 1e-4 `
+  --patience 10 `
+  --amp
 ```
 
-This experiment trains an attention-based model on sequences of neighboring windows.
-
-The purpose is to compare:
+Назначение:
 
 ```text
-simple context-tabular model
-vs
-MHA / TransformerEncoder model
-```
-
----
-
-## 8.7. Experiment comparison
-
-Check available arguments:
-
-```powershell
-D:\miniconda3\envs\eeg_nir\python.exe src\14_compare_experiments.py --help
-```
-
-This script should be used after baseline, context-tabular and MHA experiments are available.
-
-Expected comparison:
-
-```text
-single-window baseline
-context-tabular seq_len=3
-context-tabular seq_len=5
-MHA seq_len=3
-MHA seq_len=5
+Проверяет, помогает ли локальная временная динамика соседних окон улучшить предсказание PM-метрик.
 ```
 
 ---
 
-## 9. Git and artifact policy
+### `src/17_train_transformer_pm_dynamics.py`
 
-Do not commit large or intermediate generated files:
+TransformerEncoder-модель для анализа локального временного контекста.
+
+Задача:
+
+```text
+Вход: последовательность из 5 соседних EEG/POW-окон
+Механизм: self-attention over neighboring windows
+Выход: 7 PM target-переменных
+```
+
+Полный запуск:
+
+```powershell
+D:\miniconda3\envs\eeg_nir\python.exe src\17_train_transformer_pm_dynamics.py `
+  --root . `
+  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
+  --run-name transformer_pm_groupkfold_full `
+  --feature-set pow_plus_eeg `
+  --seq-len 5 `
+  --target-position center `
+  --pooling center `
+  --n-splits 5 `
+  --epochs 50 `
+  --batch-size 512 `
+  --d-model 128 `
+  --nhead 4 `
+  --num-layers 2 `
+  --dim-feedforward 256 `
+  --dropout 0.2 `
+  --lr 5e-4 `
+  --weight-decay 1e-4 `
+  --patience 8 `
+  --amp
+```
+
+Назначение:
+
+```text
+TransformerEncoder является основной attention-based DL-моделью проекта.
+```
+
+Основной вывод:
+
+```text
+TransformerEncoder оказался лучшей моделью почти по всем PM-метрикам.
+```
+
+---
+
+### `src/22_train_eeg_autoencoder.py`
+
+Autoencoder для восстановления и генерации EEG/POW feature vectors.
+
+Задача:
+
+```text
+Вход: EEG/POW feature vector
+Encoder: feature vector → latent representation
+Decoder: latent representation → reconstructed feature vector
+Synthetic generation: latent vector + Gaussian noise → decoder → synthetic feature vector
+```
+
+Полный запуск:
+
+```powershell
+D:\miniconda3\envs\eeg_nir\python.exe src\22_train_eeg_autoencoder.py `
+  --root . `
+  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
+  --run-name ae_pow_plus_eeg_full `
+  --feature-set pow_plus_eeg `
+  --latent-dim 32 `
+  --hidden-dims 512 256 128 `
+  --epochs 80 `
+  --batch-size 1024 `
+  --lr 1e-3 `
+  --weight-decay 1e-5 `
+  --patience 10 `
+  --n-synthetic 10000 `
+  --noise-scale 0.35 `
+  --amp
+```
+
+Назначение:
+
+```text
+Закрывает генеративную часть экзаменационного задания.
+```
+
+Важно:
+
+```text
+Генерация выполняется не в пространстве raw EEG-сигнала, а в пространстве EEG/POW feature vectors.
+```
+
+Основные reconstruction-метрики:
+
+```text
+scaled MSE:     0.145
+scaled RMSE:    0.381
+scaled MAE:     0.104
+scaled cosine:  0.778
+```
+
+Основные real-vs-synthetic метрики:
+
+```text
+scaled feature mean abs diff mean: 0.031
+scaled feature std abs diff mean:  0.149
+```
+
+Интерпретация:
+
+```text
+Autoencoder достаточно хорошо восстанавливает стандартизированное признаковое пространство. Synthetic vectors близки к real vectors по средним значениям признаков, но хуже совпадают по дисперсии.
+```
+
+---
+
+## 6.4. Финальная сводка экспериментов
+
+### `src/23_summarize_dl_experiments.py`
+
+Собирает результаты всех основных экспериментов:
+
+```text
+Classical baseline
+MLP
+LSTM
+TransformerEncoder
+Autoencoder
+```
+
+Запуск:
+
+```powershell
+D:\miniconda3\envs\eeg_nir\python.exe src\23_summarize_dl_experiments.py `
+  --root .
+```
+
+Создаёт:
+
+```text
+reports/final_summary/
+├── final_exam_report.md
+├── tables/
+│   ├── final_model_comparison.csv
+│   ├── best_model_by_target.csv
+│   ├── detected_runs.json
+│   └── autoencoder_summary_metrics.csv
+└── figures/
+    ├── final_model_comparison_r2.png
+    ├── final_model_comparison_spearman.png
+    └── best_r2_by_target.png
+```
+
+---
+
+## 7. Итоговые результаты
+
+Финальное сравнение моделей показало, что TransformerEncoder является лучшей моделью почти по всем target-переменным.
+
+| Target              | Лучшая модель по R² |    R² | Лучшая модель по Spearman | Spearman |
+| ------------------- | ------------------: | ----: | ------------------------: | -------: |
+| `target_excitement` |  TransformerEncoder | 0.436 |        TransformerEncoder |    0.624 |
+| `target_relaxation` |  TransformerEncoder | 0.329 |        TransformerEncoder |    0.581 |
+| `target_engagement` |                LSTM | 0.129 |        TransformerEncoder |    0.449 |
+| `target_interest`   |  TransformerEncoder | 0.214 |        TransformerEncoder |    0.429 |
+| `target_focus`      |  TransformerEncoder | 0.171 |        TransformerEncoder |    0.472 |
+| `target_stress`     |  TransformerEncoder | 0.149 |        TransformerEncoder |    0.451 |
+| `target_attention`  |  TransformerEncoder | 0.053 |        TransformerEncoder |    0.436 |
+
+Главный вывод:
+
+```text
+Модели с локальным временным контекстом работают лучше, чем простая MLP-модель на одном окне. TransformerEncoder оказался наиболее сильной deep learning моделью, что подтверждает важность self-attention и локальной временной динамики для анализа EEG/POW-представлений.
+```
+
+---
+
+## 8. Связь с требованиями экзамена
+
+| Требование                                     |                  Статус | Реализация                                                |
+| ---------------------------------------------- | ----------------------: | --------------------------------------------------------- |
+| Предобработка EEG-данных                       |               Выполнено | `04`, `05`, `06`, `08`                                    |
+| Классификация / предсказание состояний         |               Выполнено | `07`, `09`, `15`                                          |
+| Deep learning модель                           |               Выполнено | MLP, LSTM, TransformerEncoder                             |
+| Моделирование динамики                         |               Выполнено | LSTM, TransformerEncoder                                  |
+| Генерация новых EEG-фрагментов / представлений |               Выполнено | Autoencoder                                               |
+| Сравнение real/synthetic                       |               Выполнено | Autoencoder metrics + PCA/feature plots                   |
+| Визуализация экспериментов                     |               Выполнено | `reports/runs/*/figures`, `reports/final_summary/figures` |
+| Анализ результатов                             |      Выполнено частично | `reports/final_summary/final_exam_report.md`              |
+| Обнаружение аномалий                           | Не реализовано отдельно | Может быть добавлено через residual-based подход          |
+
+---
+
+## 9. Что не коммитить
+
+Не следует коммитить:
 
 ```text
 data/processed/*.parquet
 data/processed/results/
-models/*.pt
-models/*.pkl
-models/*.joblib
+reports/runs/**/models/
+reports/runs/**/synthetic/
+*.npy
+*.pt
+*.pth
+*.pkl
+*.joblib
 ```
 
-Commit useful report artifacts:
+Следует коммитить:
 
 ```text
-reports/results/*.md
-reports/figures/**/*.png
-reports/runs/<final_run>/target_metrics_agg.csv
-reports/runs/<final_run>/target_summary.csv
-reports/runs/<final_run>/report.md
-```
-
-Recommended `.gitignore` entries:
-
-```gitignore
-# Data
-data/processed/*.parquet
-data/processed/results/
-data/raw/
-data/external/
-
-# Models
-models/*.pt
-models/*.pth
-models/*.pkl
-models/*.joblib
-
-# Python
-__pycache__/
-*.py[cod]
-.ipynb_checkpoints/
-.venv/
-venv/
-env/
-
-# Smoke runs
-reports/runs/*smoke*/
+src/*.py
+configs/*.yaml
+reports/runs/*/report.md
+reports/runs/*/target_metrics_agg.csv
+reports/runs/*/fold_metrics.csv
+reports/runs/*/reconstruction_metrics.csv
+reports/runs/*/real_vs_synthetic_metrics.csv
+reports/runs/*/figures/
+reports/final_summary/
+README.md
 ```
 
 ---
 
-## 10. Current conclusions
+## 10. Рекомендуемый порядок воспроизведения
 
-Current baseline experiments show:
+### 1. Проверить датасет
 
-```text
-1. The processed EEG/PM dataset is valid and readable.
-2. EEG/POW features can predict several PM metrics above trivial baseline.
-3. Random split strongly overestimates quality.
-4. GroupKFold by subject_id is stricter and should be used as the main validation strategy.
-5. target_focus is relatively difficult, which makes it useful for temporal context experiments.
-6. Multi-PM smoke-test suggests that excitement, relaxation and engagement are more predictable than focus on a small sample.
+```powershell
+Test-Path data\processed\windowed_eeg_pm_dataset_w10.parquet
+```
+
+### 2. Запустить классический baseline
+
+```powershell
+D:\miniconda3\envs\eeg_nir\python.exe src\09_train_multi_pm_baselines.py `
+  --root . `
+  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
+  --run-name multi_pm_groupkfold_full `
+  --feature-set pow_plus_eeg `
+  --feature-mode raw_pow `
+  --models hgb,lgbm,rf `
+  --validation groupkfold `
+  --n-splits 5 `
+  --seed 42
+```
+
+### 3. Запустить MLP
+
+```powershell
+D:\miniconda3\envs\eeg_nir\python.exe src\15_train_mlp_pm_regressor.py `
+  --root . `
+  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
+  --run-name mlp_pm_groupkfold_full `
+  --feature-set pow_plus_eeg `
+  --n-splits 5 `
+  --epochs 80 `
+  --batch-size 1024 `
+  --hidden-dims 512 256 128 `
+  --dropout 0.25 `
+  --lr 1e-3 `
+  --weight-decay 1e-4 `
+  --patience 12 `
+  --amp
+```
+
+### 4. Запустить LSTM
+
+```powershell
+D:\miniconda3\envs\eeg_nir\python.exe src\16_train_lstm_pm_dynamics.py `
+  --root . `
+  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
+  --run-name lstm_pm_groupkfold_full `
+  --feature-set pow_plus_eeg `
+  --seq-len 5 `
+  --target-position center `
+  --n-splits 5 `
+  --epochs 60 `
+  --batch-size 512 `
+  --hidden-dim 128 `
+  --num-layers 1 `
+  --head-hidden-dim 128 `
+  --dropout 0.2 `
+  --lr 1e-3 `
+  --weight-decay 1e-4 `
+  --patience 10 `
+  --amp
+```
+
+### 5. Запустить TransformerEncoder
+
+```powershell
+D:\miniconda3\envs\eeg_nir\python.exe src\17_train_transformer_pm_dynamics.py `
+  --root . `
+  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
+  --run-name transformer_pm_groupkfold_full `
+  --feature-set pow_plus_eeg `
+  --seq-len 5 `
+  --target-position center `
+  --pooling center `
+  --n-splits 5 `
+  --epochs 50 `
+  --batch-size 512 `
+  --d-model 128 `
+  --nhead 4 `
+  --num-layers 2 `
+  --dim-feedforward 256 `
+  --dropout 0.2 `
+  --lr 5e-4 `
+  --weight-decay 1e-4 `
+  --patience 8 `
+  --amp
+```
+
+### 6. Запустить Autoencoder
+
+```powershell
+D:\miniconda3\envs\eeg_nir\python.exe src\22_train_eeg_autoencoder.py `
+  --root . `
+  --dataset data/processed/windowed_eeg_pm_dataset_w10.parquet `
+  --run-name ae_pow_plus_eeg_full `
+  --feature-set pow_plus_eeg `
+  --latent-dim 32 `
+  --hidden-dims 512 256 128 `
+  --epochs 80 `
+  --batch-size 1024 `
+  --lr 1e-3 `
+  --weight-decay 1e-5 `
+  --patience 10 `
+  --n-synthetic 10000 `
+  --noise-scale 0.35 `
+  --amp
+```
+
+### 7. Собрать финальную сводку
+
+```powershell
+D:\miniconda3\envs\eeg_nir\python.exe src\23_summarize_dl_experiments.py `
+  --root .
 ```
 
 ---
 
-## 11. Next steps
+## 11. Основной вывод проекта
 
-Required next steps:
-
-```text
-[ ] Finish full multi-PM GroupKFold baseline.
-[ ] Commit final report artifacts from the full multi-PM run.
-[ ] Run context-tabular baseline for seq_len=3 and seq_len=5.
-[ ] Run or transfer MHA results.
-[ ] Compare baseline vs context-tabular vs MHA.
-[ ] Add Autoencoder-based synthetic EEG-feature generation.
-[ ] Add real vs synthetic comparison.
-[ ] Add synthetic augmentation experiment.
-[ ] Prepare final report.
-[ ] Prepare final demo notebook.
-[ ] Prepare defense text.
-```
-
-Minimum exam-ready pipeline:
+В проекте был построен полный pipeline анализа EEG/POW-данных:
 
 ```text
-1. Dataset preparation
-2. Single-target baseline
-3. Multi-PM baseline
-4. Context-tabular temporal baseline
-5. MHA comparison
-6. Final comparison report
+предобработка → baseline ML → MLP → LSTM → TransformerEncoder → Autoencoder → финальное сравнение
 ```
 
-Additional laboratory-compliance pipeline:
+Главный результат:
 
-```text
-7. Autoencoder generation
-8. Real vs synthetic comparison
-9. Synthetic augmentation
-```
+> TransformerEncoder с локальным временным контекстом оказался наиболее эффективной deep learning моделью для большинства PM-метрик. Это подтверждает, что для предсказания когнитивно-аффективных состояний по ЭЭГ важны не только признаки одного окна, но и динамика соседних окон.
+
+Генеративный блок:
+
+> Autoencoder показал возможность восстановления и генерации EEG/POW feature vectors в латентном пространстве. Хотя это не полноценная генерация raw EEG-сигнала, этот подход закрывает генеративную часть проекта и позволяет сравнивать реальные и синтетические EEG-представления.
