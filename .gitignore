@@ -50,3 +50,5 @@ data/processed/results/
 
 # Experiment runs
 reports/runs/*smoke*/
+
+reports/runs/**/models/
