@@ -52,3 +52,5 @@ data/processed/results/
 reports/runs/*smoke*/
 
 reports/runs/**/models/
+reports/runs/**/synthetic/
+*.npy
