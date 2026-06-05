@@ -1,0 +1,7 @@
+{
+  "Classical baseline": "D:\\PycharmProjects\\eeg-cognitive-state-exam\\reports\\runs\\20260604_163602_multi_pm_groupkfold_full_pow_plus_eeg_raw_pow",
+  "MLP": "D:\\PycharmProjects\\eeg-cognitive-state-exam\\reports\\runs\\20260605_130703_mlp_pm_groupkfold_full_pow_plus_eeg",
+  "LSTM": "D:\\PycharmProjects\\eeg-cognitive-state-exam\\reports\\runs\\20260605_131912_lstm_pm_groupkfold_full_pow_plus_eeg_seq5_center",
+  "TransformerEncoder": "D:\\PycharmProjects\\eeg-cognitive-state-exam\\reports\\runs\\20260605_133044_transformer_pm_groupkfold_full_pow_plus_eeg_seq5_center",
+  "Autoencoder": "D:\\PycharmProjects\\eeg-cognitive-state-exam\\reports\\runs\\20260605_133745_ae_pow_plus_eeg_full_pow_plus_eeg_latent32"
+}

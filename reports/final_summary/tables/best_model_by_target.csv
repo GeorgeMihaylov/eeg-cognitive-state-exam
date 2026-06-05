@@ -1,0 +1,8 @@
+﻿target,best_by_r2,best_r2,best_by_spearman,best_spearman
+target_excitement,TransformerEncoder,0.4356363892555236,TransformerEncoder,0.6243398810944276
+target_relaxation,TransformerEncoder,0.329364538192749,TransformerEncoder,0.5808415447706106
+target_engagement,LSTM,0.1287413954734802,TransformerEncoder,0.4488321279807322
+target_interest,TransformerEncoder,0.2141786694526672,TransformerEncoder,0.4290934098556361
+target_focus,TransformerEncoder,0.1705084323883056,TransformerEncoder,0.4720625406768887
+target_stress,TransformerEncoder,0.148657214641571,TransformerEncoder,0.4507523999976399
+target_attention,TransformerEncoder,0.0532111048698425,TransformerEncoder,0.435877207492775
