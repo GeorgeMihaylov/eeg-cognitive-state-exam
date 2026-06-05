@@ -1,0 +1,12 @@
+{
+  "rows_real_total": 43174,
+  "rows_train_real": 34199,
+  "rows_test_real": 8975,
+  "rows_synthetic_used": 10000,
+  "rows_train_augmented": 44199,
+  "n_features": 448,
+  "n_targets": 7,
+  "subjects_total": 53,
+  "subjects_train": 42,
+  "subjects_test": 11
+}
